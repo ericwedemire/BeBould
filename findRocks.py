@@ -2,11 +2,14 @@ import cv2
 import numpy as np
 import imutils
 from PIL import Image, ImageEnhance
+import matplotlib.pyplot as plt
 
 def imageAlter(image):
    alteredImage = Image.open(image)
-   converter = ImageEnhance.Color(alteredImage)
-   alteredImage = converter.enhance(0.4)
+   color = ImageEnhance.Color(alteredImage)
+   alteredImage = color.enhance(0.5)
+   contrast = ImageEnhance.Contrast(alteredImage)
+   alteredImage = contrast.enhance(1.1)
 
    alteredImage.save("altered.jpg", "JPEG")
    return
@@ -15,6 +18,7 @@ def imageAnalyze(image):
    img = cv2.imread(image)
    cv2.namedWindow("original", cv2.WINDOW_NORMAL)
    cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
+   cv2.namedWindow("masked", cv2.WINDOW_NORMAL)
 
    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
@@ -47,14 +51,26 @@ def imageAnalyze(image):
    #defining the Range of Blue color
    blue_upper = np.array([115,161,221])
    blue_lower = np.array([36,52,77])
+  
+   upper = np.array([200,255,200])
+   lower = np.array([0,0,0])
    #-----------
 
-   mask = cv2.inRange(hsv, blue_lower,blue_upper)
+   mask = cv2.inRange(hsv, lower,upper)
    imS = cv2.resize(img, (960, 540))
    imM = cv2.resize(mask, (960, 540))
 
+   # cv2.imshow('CV', mask)
    cv2.imshow('original', img)
-   cv2.imshow('CV', mask)
+
+   for i in range(0,10):
+      for i in range(0,3):
+         upper[i] -= 10
+         lower[i] += 5
+      new_image = cv2.copyTo(img, mask)
+      mask = cv2.inRange(hsv, lower,upper)
+
+   cv2.imshow('masked', new_image)
 
    while(True):
       k = cv2.waitKey(5) & 0xFF
@@ -65,5 +81,16 @@ def imageAnalyze(image):
    
    return
 
-imageAlter('RockPictures\\20200116_144936.jpg')
+imageAlter('RockPictures\\20200116_144936_flip.jpg')
+# imageAlter("RockPictures\\20200116_143410.jpg")
 imageAnalyze("altered.jpg")
+
+def test(pic):
+
+   image = cv2.imread(pic)
+   print("The type of this input is {}".format(type(image)))
+   print("Shape: {}".format(image.shape))
+   plt.imshow(image)
+   return
+
+test('RockPictures\\20200116_144936_flip.jpg')
