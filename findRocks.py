@@ -1,6 +1,13 @@
 import cv2
 import numpy as np
 import imutils
+import PIL
+
+def imageAlter(image):
+   alteredImage = PIL.Image.open(image)
+   
+
+   return alteredImage
 
 def imageAnalyze(image):
    img = cv2.imread(image)
