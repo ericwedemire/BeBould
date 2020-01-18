@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 import imutils
 
-def imageAnalyze:
-   img = cv2.imread('RockPictures\\20200116_144936.jpg')
+def imageAnalyze(image):
+   img = cv2.imread(image)
    cv2.namedWindow("original", cv2.WINDOW_NORMAL)
    cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
 
@@ -55,3 +55,5 @@ def imageAnalyze:
    cv2.destroyAllWindows()
    
    return
+
+imageAnalyze('RockPictures\\20200116_144936.jpg')
