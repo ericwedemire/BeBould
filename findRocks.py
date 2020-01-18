@@ -1,13 +1,15 @@
 import cv2
 import numpy as np
 import imutils
-import PIL
+from PIL import Image, ImageEnhance
 
 def imageAlter(image):
-   alteredImage = PIL.Image.open(image)
-   
+   alteredImage = Image.open(image)
+   converter = ImageEnhance.Color(alteredImage)
+   alteredImage = converter.enhance(0.4)
 
-   return alteredImage
+   alteredImage.save("altered.jpg", "JPEG")
+   return
 
 def imageAnalyze(image):
    img = cv2.imread(image)
@@ -63,4 +65,5 @@ def imageAnalyze(image):
    
    return
 
-imageAnalyze('RockPictures\\20200116_144936.jpg')
+imageAlter('RockPictures\\20200116_144936.jpg')
+imageAnalyze("altered.jpg")
