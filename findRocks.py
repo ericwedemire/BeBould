@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from flask import Flask
 import cv2
 import numpy as np
 import imutils
@@ -65,9 +66,13 @@ def imageAnalyze(image):
 
    return
 
-try:
-   # For filthy Windows users
-   imageAnalyze('RockPictures\\20200116_144936.jpg')
-except:
-   # FOr everyone else
-   imageAnalyze('RockPictures/20200116_144936.jpg')
+def main():
+   try:
+      # For filthy Windows users
+      imageAnalyze('RockPictures\\20200116_144936.jpg')
+   except:
+      # FOr everyone else
+      imageAnalyze('RockPictures/20200116_144936.jpg')
+
+if __name__ == "__main__":
+   main()
