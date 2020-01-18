@@ -1,0 +1,14 @@
+##################################################
+# Objective
+##################################################
+
+Take a user provided image and have the application detect 
+the colors of the bouldering holds, to detect usable parts for paths
+
+##################################################
+# Implementation
+##################################################
+-openCV and python color detection
+-ability to change incorrect detections
+-ability to create custom routes with detected pieces, to set
+ up competitive paths to challenge your friends
