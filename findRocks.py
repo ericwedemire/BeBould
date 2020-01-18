@@ -5,7 +5,7 @@ import PIL
 
 def imageAlter(image):
    alteredImage = PIL.Image.open(image)
-   
+
 
    return alteredImage
 
@@ -60,7 +60,12 @@ def imageAnalyze(image):
          break
 
    cv2.destroyAllWindows()
-   
+
    return
 
-imageAnalyze('RockPictures\\20200116_144936.jpg')
+try:
+   # For filthy Windows users
+   imageAnalyze('RockPictures\\20200116_144936.jpg')
+except:
+   # FOr everyone else
+   imageAnalyze('RockPictures/20200116_144936.jpg')
