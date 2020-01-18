@@ -12,3 +12,5 @@ the colors of the bouldering holds, to detect usable parts for paths
 -ability to change incorrect detections
 -ability to create custom routes with detected pieces, to set
  up competitive paths to challenge your friends
+-flask front end
+-mongoDB backend
