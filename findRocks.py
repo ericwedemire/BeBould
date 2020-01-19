@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import imutils
 from PIL import Image, ImageEnhance
+import matplotlib.pyplot as plt
 import random as rng
 import math
 
@@ -17,11 +18,9 @@ def imageAlter(image):
    return
 
 
-
-def imageAnalyze(image):
+def image_show(image):
    img = cv2.imread(image)
    cv2.namedWindow("original", cv2.WINDOW_NORMAL)
-   cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
    cv2.namedWindow("masked", cv2.WINDOW_NORMAL)
    cv2.namedWindow("edges", cv2.WINDOW_NORMAL)
    img = cv2.bilateralFilter(img,9,75,75)
@@ -74,42 +73,78 @@ def imageAnalyze(image):
 
    # copy all masks to orignal image
    new_image = cv2.copyTo(img, mask_master)
-   
-   edges = cv2.Canny(new_image,100,200, apertureSize=7)
-   edges = cv2.Blur(edges,(5,5))
 
-   edges = cv2.copyTo(edges, cv2.Blur(mask_master,(5,5)))
+   gray = cv2.cvtColor(new_image,cv2.COLOR_BGR2GRAY)
+   ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
 
-   cv2.imshow("CV", mask_master)
+   # noise removal
+   kernel = np.ones((3,3),np.uint8)
+   opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations = 2)
+
+   # sure background area
+   sure_bg = cv2.dilate(opening,kernel,iterations=3)
+
+   # Finding sure foreground area
+   dist_transform = cv2.distanceTransform(opening,cv2.DIST_L2,5)
+   ret, sure_fg = cv2.threshold(dist_transform,0.7*dist_transform.max(),255,0)
+
+   # Finding unknown region
+   sure_fg = np.uint8(sure_fg)
+   unknown = cv2.subtract(sure_bg, sure_fg)
+
+   # Marker labelling
+   ret, markers = cv2.connectedComponents(sure_fg)
+
+   # Add one to all labels so that sure background is not 0, but 1
+   markers = markers+1
+
+   # Now, mark the region of unknown with zero
+   markers[unknown==255] = 0
+
+   edges = cv2.Canny(unknown,100,200, apertureSize=7)
+   edges = cv2.blur(edges,(5,5))
+
+   edges = cv2.copyTo(edges, cv2.blur(mask_master,(10,10)))
+
    cv2.imshow('original', img)
    cv2.imshow("edges", edges)
    cv2.imshow('masked', new_image)
-   threshold = 500
-   ret,thresh = cv2.threshold(edges,250,255,cv2.THRESH_BINARY_INV)
-   contours,hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-   canny_output = cv2.Canny(mask_master, threshold, threshold * 2)
-
-   contours_poly = [None]*len(contours)
-   boundRect = [None]*len(contours)
-   centers = [None]*len(contours)
-   radius = [None]*len(contours)
-   for i, c in enumerate(contours):
-      print(i)
-      contours_poly[i] = cv2.approxPolyDP(c, 5, True)
-      boundRect[i] = cv2.boundingRect(contours_poly[i])
-      centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])
-
-   drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
    
-   objects=[]
+   cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
+   cv2.imshow("CV", unknown)
 
-   hierarchy = hierarchy[0]
-   for i in range(len(contours)):
-      currentHierarchy = hierarchy[i]
-      color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
-      if int(radius[i]) > 10 and int(radius[i]) < 200:
-         cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
-         objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
+image_show("RockPictures/20200116_144936_flip.jpg")
+
+
+def imageAnalyze(image):
+
+
+   # threshold = 500
+   # ret,thresh = cv2.threshold(edges,250,255,cv2.THRESH_BINARY_INV)
+   # contours,hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+   # canny_output = cv2.Canny(mask_master, threshold, threshold * 2)
+
+   # contours_poly = [None]*len(contours)
+   # boundRect = [None]*len(contours)
+   # centers = [None]*len(contours)
+   # radius = [None]*len(contours)
+   # for i, c in enumerate(contours):
+   #    print(i)
+   #    contours_poly[i] = cv2.approxPolyDP(c, 5, True)
+   #    boundRect[i] = cv2.boundingRect(contours_poly[i])
+   #    centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])
+
+   # drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+   
+   # objects=[]
+
+   # hierarchy = hierarchy[0]
+   # for i in range(len(contours)):
+   #    currentHierarchy = hierarchy[i]
+   #    color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
+   #    if int(radius[i]) > 10 and int(radius[i]) < 200:
+   #       cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
+   #       objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
 
    while(True):
       k = cv2.waitKey(5) & 0xFF
