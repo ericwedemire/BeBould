@@ -12,8 +12,15 @@ SECURITY_KEY = "sdkfgljkszgdfkzrl"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.secret_key = SECURITY_KEY
 
+
+def allowed_file(filename):
+    if "." in filename:
+        return filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return False
+
+
 @app.route('/', methods=["GET", "POST"])
-def upload_file():
+def upload_file(submit_empty=False):
     if fl.request.method == "POST":
         # check if the post request has the file part
         if 'file' not in fl.request.files:
@@ -29,19 +36,21 @@ def upload_file():
                 fl.flash('No selected file')
             except:
                 print("nothing submitted")
-            return fl.redirect(fl.request.url)
+            # return fl.redirect(fl.request.url)
+            return fl.redirect(fl.url_for("upload_file", submit_empty=True))
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return fl.redirect(fl.url_for('uploaded_file', filename=filename))
-    return fl.render_template("picUpload.html")
+
+    # If a GET message sent instead
+    return fl.render_template("picUpload.html", empty=submit_empty)
 
 
-def allowed_file(filename):
-    if "." in filename:
-        return filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-    return False
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return fl.send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 if __name__ == "__main__":
