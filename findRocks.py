@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from flask import Flask
 import cv2
 import numpy as np
@@ -74,13 +72,16 @@ def imageAnalyze(image):
    imS = cv2.resize(img, (960, 540))
    imM = cv2.resize(mask_master, (960, 540))
 
-
-   
-
    # copy all masks to orignal image
    new_image = cv2.copyTo(img, mask_master)
    
    edges = cv2.Canny(new_image,100,200, apertureSize=7)
+   edges = cv2.GaussianBlur(edges,(5,5),0)
+
+   cv2.imshow("CV", mask_master)
+   cv2.imshow('original', img)
+   cv2.imshow("edges", edges)
+   cv2.imshow('masked', new_image)
    threshold = 500
    ret,thresh = cv2.threshold(edges,250,255,cv2.THRESH_BINARY_INV)
    contours,hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -107,13 +108,6 @@ def imageAnalyze(image):
       if int(radius[i]) > 10 and int(radius[i]) < 200:
          cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
          objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
-         
-
-   
-   cv2.imshow("CV", mask_master)
-   cv2.imshow('original', img)
-   cv2.imshow("edges", edges)
-   cv2.imshow('masked', new_image)
 
    while(True):
       k = cv2.waitKey(5) & 0xFF
@@ -125,12 +119,9 @@ def imageAnalyze(image):
    return
 
 def main():
-   try:
-      # For filthy Windows users
-      imageAnalyze('RockPictures\\20200116_144936.jpg')
-   except:
-      # FOr everyone else
-      imageAnalyze('RockPictures/20200116_144936.jpg')
+   imageAlter('RockPictures/20200116_144936_flip.jpg')
+   imageAnalyze("altered.jpg")
+
 
 if __name__ == "__main__":
    main()
