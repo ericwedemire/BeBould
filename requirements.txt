@@ -1,3 +1,4 @@
+gunicorn
 flask
 opencv-contrib-python
 Pillow
