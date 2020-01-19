@@ -76,7 +76,9 @@ def imageAnalyze(image):
    new_image = cv2.copyTo(img, mask_master)
    
    edges = cv2.Canny(new_image,100,200, apertureSize=7)
-   edges = cv2.GaussianBlur(edges,(5,5),0)
+   edges = cv2.Blur(edges,(5,5))
+
+   edges = cv2.copyTo(edges, cv2.Blur(mask_master,(5,5)))
 
    cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
