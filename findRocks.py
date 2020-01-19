@@ -85,7 +85,9 @@ def imageAnalyze(image):
       centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])
 
    drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
-      
+   
+   objects=[]
+
    hierarchy = hierarchy[0]
    for i in range(len(contours)):
       currentHierarchy = hierarchy[i]
@@ -113,16 +115,6 @@ def imageAnalyze(image):
    
    return
 
-imageAlter('RockPictures\\IMG_20200116_143756.jpg')
-#imageAlter("RockPictures\\20200116_143420.jpg")
+#imageAlter('RockPictures\\20200116_144936_flip.jpg')
+imageAlter("RockPictures\\20200116_143420.jpg")
 imageAnalyze("altered.jpg")
-
-def test(pic):
-
-   image = cv2.imread(pic)
-   print("The type of this input is {}".format(type(image)))
-   print("Shape: {}".format(image.shape))
-   plt.imshow(image)
-   return
-
-test('RockPictures\\20200116_144936_flip.jpg')
