@@ -1,5 +1,7 @@
 gunicorn
 flask
-opencv-contrib-python
+opencv-python
+imutils
 Pillow
 numpy
+matplotlib 
