@@ -41,9 +41,9 @@ def imageAnalyze(image, debug=False):
 
    # Accepted Colors
    #-----------
-   #defining the Range of ??? color
-   lower_range = np.array([110,50,50])
-   upper_range = np.array([130,255,255])
+   #defining the Range of purple wall color
+   wall_upper = np.array([156,110,131])
+   wall_lower = np.array([86,44,63])
 
    #defining the Range of Yellow color
    yellow_upper = np.array([30, 255, 255])
@@ -73,21 +73,28 @@ def imageAnalyze(image, debug=False):
    blue_lower = np.array([36,52,77])
 
    #-----------
+   #additive masks
    mask_alt_yellow = cv2.inRange(hsv,yellow_alt_lower, yellow_alt_upper)
    mask_blue = cv2.inRange(hsv,blue_lower,blue_upper)
    mask_green = cv2.inRange(hsv,green_lower,green_upper)
    mask_red = cv2.inRange(hsv,red_lower,red_upper)
    mask_yellow = cv2.inRange(hsv,yellow_lower,yellow_upper)
    mask_purple = cv2.inRange(hsv,purple_lower,purple_upper)
+
+   #layering additive masks
    temp1 = cv2.addWeighted(mask_blue, 1, mask_green, 1,0)
    temp1 = cv2.addWeighted(temp1, 1, mask_alt_yellow, 1,0)
    temp2 = cv2.addWeighted(mask_yellow, 1, mask_red, 1,0)
    temp2 = cv2.addWeighted(temp2, 1, mask_purple, 1,0)
    mask_master = cv2.addWeighted(temp1, 1, temp2, 1,0)
+
+   mask_wall = cv2.inRange(hsv,wall_lower,wall_upper)
+
+   #subtracting wall mask from mask master
+   mask_master = cv2.subtract(mask_master, mask_wall)
+
    imS = cv2.resize(img, (960, 540))
    imM = cv2.resize(mask_master, (960, 540))
-
-
    
 
    # copy all masks to orignal image
