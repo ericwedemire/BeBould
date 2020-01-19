@@ -29,20 +29,22 @@ def imageAnalyze(image):
    upper_range = np.array([130,255,255])
 
    #defining the Range of Yellow color
-   yellow_lower = np.array([212,192,121])
-   yellow_upper = np.array([130,102,28])
+   yellow_upper = np.array([30, 255, 255])
+   yellow_lower = np.array([6,38,61])
+   # yellow_upper = np.array([212,192,121])
+   # yellow_lower = np.array([130,102,28])
 
    #defining the Range of Purple color
-   purple_lower = np.array([125,104,161])
-   purple_upper = np.array([49,39,63])
+   purple_upper = np.array([125,104,161])
+   purple_lower = np.array([49,39,63])
 
    #defining the Range of Green color
-   green_lower = np.array([49,96,62])
-   green_upper = np.array([23,48,29])
+   green_upper = np.array([49,96,62])
+   green_lower = np.array([23,48,29])
 
    #defining the Range of Red color
-   red_lower = np.array([200,94,96])
-   red_upper = np.array([51,22,26])
+   red_upper = np.array([200,94,96])
+   red_lower = np.array([51,22,26])
 
    #defining the Range of Black color
    black_lower = np.array([97,102,121])
@@ -52,24 +54,27 @@ def imageAnalyze(image):
    blue_upper = np.array([115,161,221])
    blue_lower = np.array([36,52,77])
   
-   upper = np.array([200,255,200])
-   lower = np.array([0,0,0])
    #-----------
 
-   mask = cv2.inRange(hsv, lower,upper)
+   mask_blue = cv2.inRange(hsv,blue_lower,blue_upper)
+   mask_green = cv2.inRange(hsv,green_lower,green_upper)
+   mask_red = cv2.inRange(hsv,red_lower,red_upper)
+   mask_yellow = cv2.inRange(hsv,yellow_lower,yellow_upper)
+   mask_purple = cv2.inRange(hsv,purple_lower,purple_upper)
+   temp1 = cv2.addWeighted(mask_blue, 1, mask_green, 1,0)
+   temp2 = cv2.addWeighted(mask_yellow, 1, mask_red, 1,0)
+   temp2 = cv2.addWeighted(temp2, 1, mask_purple, 1,0)
+   mask_master = cv2.addWeighted(temp1, 1, temp2, 1,0)
    imS = cv2.resize(img, (960, 540))
-   imM = cv2.resize(mask, (960, 540))
+   imM = cv2.resize(mask_master, (960, 540))
 
-   # cv2.imshow('CV', mask)
+   
+
+   # copy all masks to orignal image
+   new_image = cv2.copyTo(img, mask_master)
+
+   cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
-
-   for i in range(0,10):
-      for i in range(0,3):
-         upper[i] -= 10
-         lower[i] += 5
-      new_image = cv2.copyTo(img, mask)
-      mask = cv2.inRange(hsv, lower,upper)
-
    cv2.imshow('masked', new_image)
 
    while(True):
@@ -81,8 +86,8 @@ def imageAnalyze(image):
    
    return
 
-imageAlter('RockPictures\\20200116_144936_flip.jpg')
-# imageAlter("RockPictures\\20200116_143410.jpg")
+imageAlter('RockPictures\\IMG_20200116_143756.jpg')
+#imageAlter("RockPictures\\20200116_143420.jpg")
 imageAnalyze("altered.jpg")
 
 def test(pic):
