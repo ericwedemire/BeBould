@@ -23,8 +23,8 @@ def imageAlter(image):
    alteredImage = Image.open(image)   
    contrast = ImageEnhance.Contrast(alteredImage)
    color = ImageEnhance.Color(alteredImage)
-   alteredImage = contrast.enhance(1.2)
-   alteredImage = color.enhance(0.5)
+   alteredImage = contrast.enhance(1.1)
+   alteredImage = color.enhance(0.8)
    alteredImage.save("altered.jpg", "JPEG")
    return
 
@@ -65,20 +65,22 @@ def imageAnalyze(image, debug=False):
    red_lower = np.array([51,22,26])
 
    #defining the Range of Black color
-   black_lower = np.array([97,102,121])
-   black_upper = np.array([38,38,38])
+   black_upper = np.array([32,30,36])
+   black_lower = np.array([26,25,31])
 
    #defining the Range of Blue color
    blue_upper = np.array([115,161,221])
    blue_lower = np.array([36,52,77])
 
    #-----------
+   #mask_black = cv2.inRange(hsv,black_lower,blue_upper)
    mask_blue = cv2.inRange(hsv,blue_lower,blue_upper)
    mask_green = cv2.inRange(hsv,green_lower,green_upper)
    mask_red = cv2.inRange(hsv,red_lower,red_upper)
    mask_yellow = cv2.inRange(hsv,yellow_lower,yellow_upper)
    mask_purple = cv2.inRange(hsv,purple_lower,purple_upper)
    temp1 = cv2.addWeighted(mask_blue, 1, mask_green, 1,0)
+   #temp1 = cv2.addWeighted(temp1, 1, mask_black, 1,0)
    temp2 = cv2.addWeighted(mask_yellow, 1, mask_red, 1,0)
    temp2 = cv2.addWeighted(temp2, 1, mask_purple, 1,0)
    mask_master = cv2.addWeighted(temp1, 1, temp2, 1,0)
@@ -148,7 +150,7 @@ def imageAnalyze(image, debug=False):
    cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
    cv2.imshow("edges", edges)
-   cv2.imshow('masked', drawing)
+
 
    out_file = outfile(image)
    cv2.imwrite(os.path.join(UPLOAD_DIR, out_file), mask_master)
@@ -171,7 +173,8 @@ def outfile(fname):
 
 def main():
       # For everyone else
-      imageAnalyze('RockPictures/20200116_144936.jpg', debug=True)
+      imageAlter('RockPictures/20200116_144936.jpg')
+      imageAnalyze('altered.jpg', debug=True)
 
 
 def flaskTest():
