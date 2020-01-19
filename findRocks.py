@@ -6,11 +6,12 @@ import numpy as np
 import imutils
 import PIL
 
+
 def imageAlter(image):
    alteredImage = PIL.Image.open(image)
 
-
    return alteredImage
+
 
 def imageAnalyze(image):
    img = cv2.imread(image)
@@ -66,6 +67,7 @@ def imageAnalyze(image):
 
    return
 
+
 def main():
    try:
       # For filthy Windows users
@@ -73,6 +75,13 @@ def main():
    except:
       # FOr everyone else
       imageAnalyze('RockPictures/20200116_144936.jpg')
+
+
+def flaskTest():
+   string = "If you can read this, you're viewing it from a Flask server"
+
+   return string
+
 
 if __name__ == "__main__":
    main()
