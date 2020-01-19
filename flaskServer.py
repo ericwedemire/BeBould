@@ -6,7 +6,7 @@ import findRocks as fr
 import os
 
 app = fl.Flask(__name__)
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+UPLOAD_FOLDER = "./uploads"
 ALLOWED_EXTENSIONS = {"jpg", ".png", ".bmp"}
 SECURITY_KEY = "sdkfgljkszgdfkzrl"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
