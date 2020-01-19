@@ -170,11 +170,6 @@ def outfile(fname):
 
 
 def main():
-
-   try:
-      # For filthy Windows users
-      imageAnalyze('RockPictures\\20200116_144936.jpg', debug=True)
-   except:
       # For everyone else
       imageAnalyze('RockPictures/20200116_144936.jpg', debug=True)
 
