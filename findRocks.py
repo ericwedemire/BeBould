@@ -75,8 +75,14 @@ def imageAnalyze(image):
    imM = cv2.resize(mask_master, (960, 540))
 
 
-   threshold = 100
-   ret,thresh = cv2.threshold(mask_master,250,255,cv2.THRESH_BINARY_INV)
+   
+
+   # copy all masks to orignal image
+   new_image = cv2.copyTo(img, mask_master)
+   
+   edges = cv2.Canny(new_image,100,200, apertureSize=7)
+   threshold = 500
+   ret,thresh = cv2.threshold(edges,250,255,cv2.THRESH_BINARY_INV)
    contours,hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
    canny_output = cv2.Canny(mask_master, threshold, threshold * 2)
 
@@ -92,24 +98,18 @@ def imageAnalyze(image):
 
    drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
    
-   # objects=[]
+   objects=[]
 
-   # hierarchy = hierarchy[0]
-   # for i in range(len(contours)):
-   #    currentHierarchy = hierarchy[i]
-   #    color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
-   #    if int(radius[i]) > 10 and int(radius[i]) < 200:
-   #       cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
-   #       objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
+   hierarchy = hierarchy[0]
+   for i in range(len(contours)):
+      currentHierarchy = hierarchy[i]
+      color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
+      if int(radius[i]) > 10 and int(radius[i]) < 200:
+         cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
+         objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
          
 
    
-
-   # copy all masks to orignal image
-   new_image = cv2.copyTo(img, mask_master)
-   
-   edges = cv2.Canny(new_image,100,200, apertureSize=7)
-
    cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
    cv2.imshow("edges", edges)
