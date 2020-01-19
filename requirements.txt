@@ -1,0 +1,4 @@
+flask
+opencv-contrib-python
+Pillow
+numpy
