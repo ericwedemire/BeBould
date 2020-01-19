@@ -15,7 +15,6 @@ UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
 
 #
 def imageAlter(image):
-
    alteredImage = Image.open(image)   
    contrast = ImageEnhance.Contrast(alteredImage)
    color = ImageEnhance.Color(alteredImage)
@@ -26,12 +25,12 @@ def imageAlter(image):
 
 
 
-def imageAnalyze(image, debug=False):
-
+def imageAnalyze(image, debug=True):
+   cv2.destroyAllWindows()
    img = cv2.imread(image)
    cv2.namedWindow("original", cv2.WINDOW_NORMAL)
-   cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
-   cv2.namedWindow("edges", cv2.WINDOW_NORMAL)
+   #cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
+   #cv2.namedWindow("edges", cv2.WINDOW_NORMAL)
    img = cv2.bilateralFilter(img,9,75,75)
    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
@@ -90,7 +89,7 @@ def imageAnalyze(image, debug=False):
    mask_master = cv2.subtract(mask_master, mask_wall)
 
    imS = cv2.resize(img, (960, 540))
-   imM = cv2.resize(mask_master, (960, 540))
+   #imM = cv2.resize(mask_master, (960, 540))
    
 
    # copy all masks to orignal image
@@ -153,13 +152,12 @@ def imageAnalyze(image, debug=False):
 
    cv2.setMouseCallback('original', mouse_drawing)
 
-   cv2.imshow("CV", mask_master)
+   #cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
-   cv2.imshow("edges", edges)
-
-
+   #cv2.imshow("edges", edges)
+  
    out_file = outfile(image)
-   cv2.imwrite(os.path.join(UPLOAD_DIR, out_file), mask_master)
+   cv2.imwrite(os.path.join(UPLOAD_DIR, out_file), img)
 
    while(debug):
       k = cv2.waitKey(5) & 0xFF
@@ -179,7 +177,7 @@ def outfile(fname):
 
 def main():
       # For everyone else
-      imageAlter('RockPictures\IMG_20200116_143855.jpg')
+      imageAlter('RockPictures/IMG_20200116_143855.jpg')
       imageAnalyze('altered.jpg', debug=True)
 
 
