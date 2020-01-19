@@ -146,12 +146,7 @@ def imageAnalyze(image):
    return
 
 def main():
-   try:
-      # For filthy Windows users
-      imageAnalyze('RockPictures\\20200116_144936.jpg')
-   except:
-      # FOr everyone else
-      imageAnalyze('RockPictures/IMG_20200116_143756.jpg')
+   imageAnalyze('RockPictures/IMG_20200116_143756.jpg')
 
 if __name__ == "__main__":
    main()
