@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 
 from flask import Flask
+import os
 import cv2
 import numpy as np
 import imutils
 from PIL import Image, ImageEnhance
 import random as rng
 import math
+
+
+
+UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+
+
+def imageAlter(image):
+   alteredImage = Image.open(image)
 
 
 def imageAlter(image):
@@ -21,7 +30,8 @@ def imageAlter(image):
 
 
 
-def imageAnalyze(image):
+def imageAnalyze(image, debug=False):
+
    img = cv2.imread(image)
    cv2.namedWindow("original", cv2.WINDOW_NORMAL)
    cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
@@ -61,7 +71,7 @@ def imageAnalyze(image):
    #defining the Range of Blue color
    blue_upper = np.array([115,161,221])
    blue_lower = np.array([36,52,77])
-  
+
    #-----------
    mask_blue = cv2.inRange(hsv,blue_lower,blue_upper)
    mask_green = cv2.inRange(hsv,green_lower,green_upper)
@@ -98,14 +108,15 @@ def imageAnalyze(image):
    centers = [None]*len(contours)
    radius = [None]*len(contours)
    for i, c in enumerate(contours):
+
       contours_poly[i] = cv2.approxPolyDP(c, 5, True)
       boundRect[i] = cv2.boundingRect(contours_poly[i])
       centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])
 
    drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
    
-   
    objects=[]
+
    hierarchy = hierarchy[0]
    tempObjects = []
    print(len(contours))
@@ -115,6 +126,7 @@ def imageAnalyze(image):
       if int(radius[i]) > 10 and int(radius[i]) < 500:
          cv2.circle(edges, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
          objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
+
   
    def mouse_drawing(event, x, y, flags, params):
       if event == cv2.EVENT_LBUTTONDOWN:
@@ -130,13 +142,18 @@ def imageAnalyze(image):
                   print(flags)
          print("Left click", x, y)
 
-   cv2.setMouseCallback('original', mouse_drawing, edges)
+
+   cv2.setMouseCallback('original', mouse_drawing)
+
    cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
    cv2.imshow("edges", edges)
    cv2.imshow('masked', drawing)
 
-   while(True):
+   out_file = outfile(image)
+   cv2.imwrite(os.path.join(UPLOAD_DIR, out_file), mask_master)
+
+   while(debug):
       k = cv2.waitKey(5) & 0xFF
       if k == 27:
          break
@@ -145,8 +162,29 @@ def imageAnalyze(image):
 
    return
 
+
+def outfile(fname):
+   comps = os.path.basename(fname).rsplit(".", 1)
+   outfname = comps[0] + "-CV." + comps[1]
+   return outfname
+
+
 def main():
-   imageAnalyze('RockPictures/IMG_20200116_143756.jpg')
+
+   try:
+      # For filthy Windows users
+      imageAnalyze('RockPictures\\20200116_144936.jpg', debug=True)
+   except:
+      # For everyone else
+      imageAnalyze('RockPictures/20200116_144936.jpg', debug=True)
+
+
+def flaskTest():
+   string = "If you can read this, you're viewing it from a Flask server"
+
+   return string
+
 
 if __name__ == "__main__":
    main()
+
