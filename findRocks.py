@@ -2,9 +2,17 @@ import cv2
 import numpy as np
 import imutils
 import random as rng
+import math
 
 def mouse_drawing(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
+        for hold in objects:
+            x2 = hold[0]
+            y2 = hold[1]
+            rad = hold[2]
+            dist = math.sqrt((x2 - x)**2 + (y2 - y)**2)
+            if (dist < rad):
+                print(dist)
         print("Left click", x, y)
 
 img = cv2.imread('RockPictures/IMG_20200116_143756.jpg')
@@ -12,6 +20,8 @@ cv2.namedWindow("original", cv2.WINDOW_NORMAL)
 cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
 
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+objects = []
 
 # Accepted Colors
 #-----------
@@ -68,7 +78,8 @@ for i in range(len(contours)):
     color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
     if int(radius[i]) > 10 and int(radius[i]) < 200:
         cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
-        # Add values to a list for collision detection
+        objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
+        
     
 
 imS = cv2.resize(img, (960, 540))
@@ -77,7 +88,7 @@ imM = cv2.resize(mask, (960, 540))
 cv2.imshow('original', img)
 cv2.imshow('CV', mask)
 cv2.setMouseCallback('original', mouse_drawing)
-
+print(len(objects))
 while(True):
    k = cv2.waitKey(5) & 0xFF
    if k == 27:
