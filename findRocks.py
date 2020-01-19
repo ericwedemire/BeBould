@@ -125,12 +125,12 @@ def imageAnalyze(image):
                dist = math.sqrt((x2 - x)**2 + (y2 - y)**2)
                font = cv2.FONT_HERSHEY_SIMPLEX
                if (dist < rad):
-                  cv2.putText(edges,"HERE",(x,y), font, .5,(255,255,255),2,cv2.LINE_AA)
-                  cv2.imshow('edges', edges)
+                  cv2.putText(img,"HERE",(x,y), font, .5,(255,255,255),2,cv2.LINE_AA)
+                  cv2.imshow('original', img)
                   print(flags)
          print("Left click", x, y)
 
-   cv2.setMouseCallback('edges', mouse_drawing, edges)
+   cv2.setMouseCallback('original', mouse_drawing, edges)
    cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
    cv2.imshow("edges", edges)
