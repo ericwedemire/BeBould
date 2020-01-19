@@ -13,11 +13,7 @@ import math
 
 UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
 
-
-def imageAlter(image):
-   alteredImage = Image.open(image)
-
-
+#
 def imageAlter(image):
 
    alteredImage = Image.open(image)   
