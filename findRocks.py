@@ -23,8 +23,8 @@ def imageAlter(image):
    alteredImage = Image.open(image)   
    contrast = ImageEnhance.Contrast(alteredImage)
    color = ImageEnhance.Color(alteredImage)
-   alteredImage = contrast.enhance(1.2)
-   alteredImage = color.enhance(0.5)
+   alteredImage = contrast.enhance(1.1)
+   alteredImage = color.enhance(0.8)
    alteredImage.save("altered.jpg", "JPEG")
    return
 
@@ -35,22 +35,22 @@ def imageAnalyze(image, debug=False):
    img = cv2.imread(image)
    cv2.namedWindow("original", cv2.WINDOW_NORMAL)
    cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
-   cv2.namedWindow("masked", cv2.WINDOW_NORMAL)
    cv2.namedWindow("edges", cv2.WINDOW_NORMAL)
    img = cv2.bilateralFilter(img,9,75,75)
    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
    # Accepted Colors
    #-----------
-   #defining the Range of ??? color
-   lower_range = np.array([110,50,50])
-   upper_range = np.array([130,255,255])
+   #defining the Range of purple wall color
+   wall_upper = np.array([156,110,131])
+   wall_lower = np.array([86,44,63])
 
    #defining the Range of Yellow color
    yellow_upper = np.array([30, 255, 255])
    yellow_lower = np.array([6,38,61])
-   # yellow_upper = np.array([212,192,121])
-   # yellow_lower = np.array([130,102,28])
+   
+   yellow_alt_upper = np.array([212,192,121])
+   yellow_alt_lower = np.array([130,102,28])
 
    #defining the Range of Purple color
    purple_upper = np.array([125,104,161])
@@ -65,27 +65,36 @@ def imageAnalyze(image, debug=False):
    red_lower = np.array([51,22,26])
 
    #defining the Range of Black color
-   black_lower = np.array([97,102,121])
-   black_upper = np.array([38,38,38])
+   black_upper = np.array([32,30,36])
+   black_lower = np.array([26,25,31])
 
    #defining the Range of Blue color
    blue_upper = np.array([115,161,221])
    blue_lower = np.array([36,52,77])
 
    #-----------
+   #additive masks
+   mask_alt_yellow = cv2.inRange(hsv,yellow_alt_lower, yellow_alt_upper)
    mask_blue = cv2.inRange(hsv,blue_lower,blue_upper)
    mask_green = cv2.inRange(hsv,green_lower,green_upper)
    mask_red = cv2.inRange(hsv,red_lower,red_upper)
    mask_yellow = cv2.inRange(hsv,yellow_lower,yellow_upper)
    mask_purple = cv2.inRange(hsv,purple_lower,purple_upper)
+
+   #layering additive masks
    temp1 = cv2.addWeighted(mask_blue, 1, mask_green, 1,0)
+   temp1 = cv2.addWeighted(temp1, 1, mask_alt_yellow, 1,0)
    temp2 = cv2.addWeighted(mask_yellow, 1, mask_red, 1,0)
    temp2 = cv2.addWeighted(temp2, 1, mask_purple, 1,0)
    mask_master = cv2.addWeighted(temp1, 1, temp2, 1,0)
+
+   mask_wall = cv2.inRange(hsv,wall_lower,wall_upper)
+
+   #subtracting wall mask from mask master
+   mask_master = cv2.subtract(mask_master, mask_wall)
+
    imS = cv2.resize(img, (960, 540))
    imM = cv2.resize(mask_master, (960, 540))
-
-
    
 
    # copy all masks to orignal image
@@ -134,10 +143,13 @@ def imageAnalyze(image, debug=False):
                x2 = hold[0]
                y2 = hold[1]
                rad = hold[2]
+               red = (0,0,255)
                dist = math.sqrt((x2 - x)**2 + (y2 - y)**2)
                font = cv2.FONT_HERSHEY_SIMPLEX
                if (dist < rad):
-                  cv2.putText(img,"X",(x,y), font, 5,(0,0,255),10,cv2.LINE_AA)
+                  org = (x-50, y-50)
+                  cv2.putText(img,"O", org, font, 5, red, 10,cv2.LINE_AA, True)
+                  print (org)
                   cv2.imshow('original', img)
                   print(flags)
          print("Left click", x, y)
@@ -148,7 +160,7 @@ def imageAnalyze(image, debug=False):
    cv2.imshow("CV", mask_master)
    cv2.imshow('original', img)
    cv2.imshow("edges", edges)
-   cv2.imshow('masked', drawing)
+
 
    out_file = outfile(image)
    cv2.imwrite(os.path.join(UPLOAD_DIR, out_file), mask_master)
@@ -170,13 +182,9 @@ def outfile(fname):
 
 
 def main():
-
-   try:
-      # For filthy Windows users
-      imageAnalyze('RockPictures\\20200116_144936.jpg', debug=True)
-   except:
       # For everyone else
-      imageAnalyze('RockPictures/20200116_144936.jpg', debug=True)
+      imageAlter('RockPictures\IMG_20200116_143855.jpg')
+      imageAnalyze('altered.jpg', debug=True)
 
 
 def flaskTest():
