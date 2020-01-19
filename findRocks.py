@@ -143,10 +143,13 @@ def imageAnalyze(image, debug=False):
                x2 = hold[0]
                y2 = hold[1]
                rad = hold[2]
+               red = (0,0,255)
                dist = math.sqrt((x2 - x)**2 + (y2 - y)**2)
                font = cv2.FONT_HERSHEY_SIMPLEX
                if (dist < rad):
-                  cv2.putText(img,"X",(x,y), font, 5,(0,0,255),10,cv2.LINE_AA)
+                  org = (x-50, y-50)
+                  cv2.putText(img,"O", org, font, 5, red, 10,cv2.LINE_AA, True)
+                  print (org)
                   cv2.imshow('original', img)
                   print(flags)
          print("Left click", x, y)
