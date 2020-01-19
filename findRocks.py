@@ -11,50 +11,33 @@ def mouse_drawing(event, x, y, flags, params):
             y2 = hold[1]
             rad = hold[2]
             dist = math.sqrt((x2 - x)**2 + (y2 - y)**2)
+            font = cv2.FONT_HERSHEY_SIMPLEX
             if (dist < rad):
+                cv2.putText(img,"HERE",(x,y), font, .5,(255,255,255),2,cv2.LINE_AA)
+                cv2.imshow('original', img)
                 print(dist)
         print("Left click", x, y)
 
-img = cv2.imread('RockPictures/IMG_20200116_143756.jpg')
+img = cv2.imread('RockPictures/20200116_144936_flip.jpg')
 cv2.namedWindow("original", cv2.WINDOW_NORMAL)
 cv2.namedWindow("CV", cv2.WINDOW_NORMAL)
-
-hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+blur = cv2.blur(img,(5,5))
+hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
 
 objects = []
 
 # Accepted Colors
 #-----------
 #defining the Range of ??? color
-lower_range = np.array([25,25,25])
-upper_range = np.array([225,225,225])
+lower_range = np.array([50,50,50])
+upper_range = np.array([200,200,200])
 
-#defining the Range of Yellow color
-yellow_lower = np.array([212,192,121])
-yellow_upper = np.array([130,102,28])
+lower_blue = np.array([240,240,240])
+upper_blue = np.array([255,255,255])
 
-#defining the Range of Purple color
-purple_lower = np.array([125,104,161])
-purple_upper = np.array([49,39,63])
+mask = cv2.inRange(hsv, lower_range, upper_range)
 
-#defining the Range of Green color
-green_lower = np.array([49,96,62])
-green_upper = np.array([23,48,29])
-
-#defining the Range of Red color
-red_lower = np.array([200,94,96])
-red_upper = np.array([51,22,26])
-
-#defining the Range of Black color
-black_lower = np.array([97,102,121])
-black_upper = np.array([38,38,38])
-
-#defining the Range of Blue color
-blue_upper = np.array([115,161,221])
-blue_lower = np.array([36,52,77])
-#-----------
-
-mask = cv2.inRange(hsv, lower_range,upper_range)
+mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
 threshold = 100
 ret,thresh = cv2.threshold(mask,250,255,cv2.THRESH_BINARY_INV)
@@ -72,15 +55,26 @@ for i, c in enumerate(contours):
 
 drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
     
-hierarchy = hierarchy[0]
+
+tempStore = []
 for i in range(len(contours)):
-    currentHierarchy = hierarchy[i]
     color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
     if int(radius[i]) > 10 and int(radius[i]) < 200:
-        cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
-        objects.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
+        #cv2.circle(img, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
+        tempStore.append((int(centers[i][0]), int(centers[i][1]), int(radius[i])))
         
-    
+tempStore.sort(key=lambda x: x[2],reverse=True)
+for i in range(len(tempStore)):
+    color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
+    flag = 0
+    for x in range(len(tempStore)):
+        dist = math.sqrt((tempStore[i][0] - tempStore[x][0])**2 + (tempStore[i][1] - tempStore[x][1])**2)
+        if dist < tempStore[x][2] and i != x:
+            flag = 1
+    if not flag:
+        cv2.circle(img, (tempStore[i][0], tempStore[i][1]), tempStore[i][2], color, 2)   
+        objects.append((tempStore[i][0], tempStore[i][1], tempStore[i][2]))    
+
 
 imS = cv2.resize(img, (960, 540))
 imM = cv2.resize(mask, (960, 540))
