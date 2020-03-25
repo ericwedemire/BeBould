@@ -5,7 +5,7 @@
 # Run this with the following command in the terminal:
 # python3 slidingWindow.py --image altered.jpg
 #
-# (Change image as needed. altered.py was in the same directory)
+# (Change image as needed. altered.jpg was in the same directory)
 #
 # #######################################################################
 
