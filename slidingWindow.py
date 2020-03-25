@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+# #######################################################################
+#
+# Run this with the following command in the terminal:
+# python3 slidingWindow.py --image altered.jpg
+#
+# (Change image as needed. altered.py was in the same directory)
+#
+# #######################################################################
+
+
 import imutils
 import argparse
 import time
