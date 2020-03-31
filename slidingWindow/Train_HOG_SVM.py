@@ -43,7 +43,10 @@ labels = []
 
 # compute HOG features and label them:
 for file in pos_im_listing: #this loop enables reading the files in the pos_im_listing variable one by one
-    img = Image.open(pos_im_path + '/' + file) # open the file
+
+    img = Image.open(pos_im_path + '/' + file) # open the file linux
+    #img = Image.open(pos_im_path + '\\' + file) # open the file windows
+    
     img = img.resize((64,128))
     gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
     # calculate HOG for positive features
@@ -53,7 +56,10 @@ for file in pos_im_listing: #this loop enables reading the files in the pos_im_l
     
 # Same for the negative images
 for file in neg_im_listing:
-    img= Image.open(neg_im_path + '/' + file)
+
+    img= Image.open(neg_im_path + '/' + file)   # linux
+    #img= Image.open(neg_im_path + '\\' + file) # windows
+
     #img = img.resize((64,128))
     gray= img.convert('L')
     # Now we calculate the HOG for negative features
