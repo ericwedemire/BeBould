@@ -23,15 +23,15 @@ def sliding_window(image, stepSize, windowSize):# image is the input, step size 
         for x in range(0, image.shape[1], stepSize):
             # yield the current window
             yield (x, y, image[y: y + windowSize[1], x:x + windowSize[0]])
-#%%
+
 # Upload the saved svm model:
-model = joblib.load('Inser\Path\of_the_trained\SVM-model\here')
+model = joblib.load('rockModel.npy')
 
 # Test the trained classifier on an image below!
 scale = 0
 detections = []
 # read the image you want to detect the object in:
-img= cv2.imread("Insert\Path\of_the_image\here")
+img= cv2.imread("newTestImage.jpg")
 
 # Try it with image resized if the image is too big
 img= cv2.resize(img,(300,200)) # can change the size to default by commenting this code out our put in a random number
@@ -79,10 +79,10 @@ for (xA, yA, xB, yB) in pick:
     cv2.rectangle(img, (xA, yA), (xB, yB), (0,255,0), 2)
 cv2.imshow("Raw Detections after NMS", img)
 #### Save the images below
- = cv2.waitKey(0) & 0xFF 
+k = cv2.waitKey(0) & 0xFF 
 if k == 27:             #wait for ESC key to exit
     cv2.destroyAllWindows()
 elif k == ord('s'):
-    cv2.imwrite('Path\to_the_directory\of_saved_image.png',img)
+    cv2.imwrite('saved_image.png',img)
     cv2.destroyAllWindows()
 
