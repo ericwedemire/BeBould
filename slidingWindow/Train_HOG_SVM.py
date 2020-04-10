@@ -48,8 +48,7 @@ for file in pos_im_listing: #this loop enables reading the files in the pos_im_l
     img = Image.open(pos_im_path + '/' + file) # open the file linux
     #img = Image.open(pos_im_path + '\\' + file) # open the file windows
 
-    img = img.resize((64,128))
-
+    img = img.resize((64,64))
     gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
     ## i think she said to add color scale channels here if we wanted to, instead of the greyscale
 
@@ -64,8 +63,9 @@ for file in neg_im_listing:
     img= Image.open(neg_im_path + '/' + file)   # linux
     #img= Image.open(neg_im_path + '\\' + file) # windows
 
-    img = img.resize((64,128))
+    img = img.resize((64,64))
     gray= img.convert('L')
+
     # Now we calculate the HOG for negative features
     fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) 
     data.append(fd)

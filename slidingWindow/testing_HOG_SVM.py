@@ -8,6 +8,7 @@ import numpy as np
 import cv2
 import os
 import glob
+from PIL import Image
 
 #Define HOG Parameters
 # change them if necessary to orientations = 8, pixels per cell = (16,16), cells per block to (1,1) for weaker HOG
@@ -34,10 +35,10 @@ detections = []
 img= cv2.imread("newTestImage.jpg")
 
 # Try it with image resized if the image is too big
-img= cv2.resize(img,(300,200)) # can change the size to default by commenting this code out our put in a random number
+img= cv2.resize(img,(601,764)) # can change the size to default by commenting this code out our put in a random number
 
 # defining the size of the sliding window (has to be, same as the size of the image in the training data)
-(winW, winH)= (64,128)
+(winW, winH)= (64,64)
 windowSize=(winW,winH)
 downscale=1.5
 # Apply sliding window:
@@ -47,7 +48,10 @@ for resized in pyramid_gaussian(img, downscale=1.5): # loop over each layer of t
         # if the window does not meet our desired window size, ignore it!
         if window.shape[0] != winH or window.shape[1] !=winW: # ensure the sliding window has met the minimum size requirement
             continue
-        window=color.rgb2gray(window)
+        if window.shape[2] != 3:
+            continue
+
+        window=color.rgb2gray(window)        
         fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
         fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
         pred = model.predict(fds) # use the SVM model to make a prediction on the HOG features extracted from the window
