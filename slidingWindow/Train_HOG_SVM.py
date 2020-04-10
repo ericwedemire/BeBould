@@ -27,6 +27,11 @@ threshold = .3
 
 
 # define path to images:
+'''
+FOR WINDOWS
+pos_im_path = r"C:\Users\ericw\OneDrive\Desktop\GitHub\NotHackED2020\slidingWindow\positives" # This is the path of our positive input dataset
+neg_im_path = r"C:\Users\ericw\OneDrive\Desktop\GitHub\NotHackED2020\slidingWindow\negatives"  # define the same for negatives
+'''
 
 pos_im_path = r"positives" # This is the path of our positive input dataset
 neg_im_path= r"negatives"  # define the same for negatives
