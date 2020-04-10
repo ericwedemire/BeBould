@@ -5,7 +5,7 @@ from skimage.transform import pyramid_gaussian
 from skimage.io import imread
 from sklearn.externals import joblib
 from sklearn.preprocessing import LabelEncoder
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, LinearSVR
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from skimage import color
@@ -36,6 +36,7 @@ pos_im_listing = os.listdir(pos_im_path) # it will read all the files in the pos
 neg_im_listing = os.listdir(neg_im_path)
 num_pos_samples = size(pos_im_listing) # simply states the total no. of images
 num_neg_samples = size(neg_im_listing)
+print()
 print(num_pos_samples) # prints the number value of the no.of samples in positive dataset
 print(num_neg_samples)
 data= []
@@ -46,9 +47,12 @@ for file in pos_im_listing: #this loop enables reading the files in the pos_im_l
 
     img = Image.open(pos_im_path + '/' + file) # open the file linux
     #img = Image.open(pos_im_path + '\\' + file) # open the file windows
-    
+
     img = img.resize((64,128))
+
     gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
+    ## i think she said to add color scale channels here if we wanted to, instead of the greyscale
+
     # calculate HOG for positive features
     fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) # fd= feature descriptor
     data.append(fd)
@@ -60,7 +64,7 @@ for file in neg_im_listing:
     img= Image.open(neg_im_path + '/' + file)   # linux
     #img= Image.open(neg_im_path + '\\' + file) # windows
 
-    #img = img.resize((64,128))
+    img = img.resize((64,128))
     gray= img.convert('L')
     # Now we calculate the HOG for negative features
     fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) 
@@ -85,7 +89,6 @@ model.fit(trainData, trainLabels)
 print(" Evaluating classifier on test data ...")
 predictions = model.predict(testData)
 print(classification_report(testLabels, predictions))
-
 
 # Save the model:
 joblib.dump(model, 'rockModel.npy')
