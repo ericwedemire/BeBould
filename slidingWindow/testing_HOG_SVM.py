@@ -34,7 +34,7 @@ detections = []
 img= cv2.imread("newTestImage.jpg")
 
 # Try it with image resized if the image is too big
-img= cv2.resize(img,(300,200)) # can change the size to default by commenting this code out our put in a random number
+img= cv2.resize(img,(601,764)) # can change the size to default by commenting this code out our put in a random number
 
 # defining the size of the sliding window (has to be, same as the size of the image in the training data)
 (winW, winH)= (64,128)
