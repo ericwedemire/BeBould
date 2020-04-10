@@ -19,10 +19,9 @@ import glob
 from PIL import Image # This will be used to read/modify images (can be done via OpenCV too)
 from numpy import *
 
-WINSIZES = ((32,32),(64,64),(128,128))
-SIZES = ("32x32", "64x64", "128x128")
+SIZES = [32, 64, 128]
 
-for i, WINSIZE in enumerate(WINSIZES):
+for i in range(3):
     # define parameters of HOG feature extraction
     orientations = 9
     pixels_per_cell = (8, 8)
@@ -57,7 +56,7 @@ for i, WINSIZE in enumerate(WINSIZES):
         #img = Image.open(pos_im_path + '\\' + file) # open the file windows
 
         #img = img.resize((64,64))
-        img = img.resize(WINSIZE)
+        img = img.resize((SIZES[i],SIZES[i]))
 
 
         gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
@@ -75,7 +74,7 @@ for i, WINSIZE in enumerate(WINSIZES):
         #img= Image.open(neg_im_path + '\\' + file) # windows
 
         #img = img.resize((64,64))
-        img = img.resize(WINSIZE)
+        img = img.resize((SIZES[i],SIZES[i]))
         gray= img.convert('L')
         # Now we calculate the HOG for negative features
         fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) 
@@ -103,5 +102,5 @@ for i, WINSIZE in enumerate(WINSIZES):
 
     # Save the model:
     #joblib.dump(model, 'rockModel.npy')
-    modname = "rockModel-" + SIZES[i] + ".npy"
+    modname = "rockModel-" + str(SIZES[i]) + ".npy"
     joblib.dump(model, modname)
