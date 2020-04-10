@@ -24,51 +24,54 @@ def sliding_window(image, stepSize, windowSize):# image is the input, step size 
             # yield the current window
             yield (x, y, image[y: y + windowSize[1], x:x + windowSize[0]])
 
-# Upload the saved svm model:
-model = joblib.load('rockModel.npy')
-
 # Test the trained classifier on an image below!
 scale = 0
 detections = []
+SIZES = [32, 64, 128]
 # read the image you want to detect the object in:
 img= cv2.imread("newTestImage.jpg")
 
 # Try it with image resized if the image is too big
 img= cv2.resize(img,(601,764)) # can change the size to default by commenting this code out our put in a random number
 
-# defining the size of the sliding window (has to be, same as the size of the image in the training data)
-(winW, winH)= (64,128)
-windowSize=(winW,winH)
-downscale=1.5
-# Apply sliding window:
-for resized in pyramid_gaussian(img, downscale=1.5): # loop over each layer of the image that you take!
-    # loop over the sliding window for each layer of the pyramid
-    for (x,y,window) in sliding_window(resized, stepSize=10, windowSize=(winW,winH)):
-        # if the window does not meet our desired window size, ignore it!
-        if window.shape[0] != winH or window.shape[1] !=winW: # ensure the sliding window has met the minimum size requirement
-            continue
-        window=color.rgb2gray(window)
-        fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
-        fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
-        pred = model.predict(fds) # use the SVM model to make a prediction on the HOG features extracted from the window
+for i in  range(3):
+    # Upload the saved svm model:
+    model = joblib.load('rockModel-' + str(SIZES[i]) + '.npy')
+    # defining the size of the sliding window (has to be, same as the size of the image in the training data)
+    (winW, winH)= (SIZES[i], SIZES[i])
+    windowSize=(winW,winH)
+    downscale=1.5
+    # Apply sliding window:
+    for resized in pyramid_gaussian(img, downscale=1.5): # loop over each layer of the image that you take!
+        # loop over the sliding window for each layer of the pyramid
+        for (x,y,window) in sliding_window(resized, stepSize=10, windowSize=(winW,winH)):
+            # if the window does not meet our desired window size, ignore it!
+            if window.shape[0] != winH or window.shape[1] !=winW: # ensure the sliding window has met the minimum size requirement
+                continue
+            if window.shape[2] != 3:
+                continue
+            window=color.rgb2gray(window)
+            fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
+            fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
+            pred = model.predict(fds) # use the SVM model to make a prediction on the HOG features extracted from the window
+            
+            if pred == 1:
+                if model.decision_function(fds) > 0.6:  # set a threshold value for the SVM prediction i.e. only firm the predictions above probability of 0.6
+                    print("Detection:: Location -> ({}, {})".format(x, y))
+                    print("Scale ->  {} | Confidence Score {} \n".format(scale,model.decision_function(fds)))
+                    detections.append((int(x * (downscale**scale)), int(y * (downscale**scale)), model.decision_function(fds),
+                                    int(windowSize[0]*(downscale**scale)), # create a list of all the predictions found
+                                        int(windowSize[1]*(downscale**scale))))
+        scale+=1
         
-        if pred == 1:
-            if model.decision_function(fds) > 0.6:  # set a threshold value for the SVM prediction i.e. only firm the predictions above probability of 0.6
-                print("Detection:: Location -> ({}, {})".format(x, y))
-                print("Scale ->  {} | Confidence Score {} \n".format(scale,model.decision_function(fds)))
-                detections.append((int(x * (downscale**scale)), int(y * (downscale**scale)), model.decision_function(fds),
-                                   int(windowSize[0]*(downscale**scale)), # create a list of all the predictions found
-                                      int(windowSize[1]*(downscale**scale))))
-    scale+=1
-    
-clone = resized.copy()
-for (x_tl, y_tl, _, w, h) in detections:
-    cv2.rectangle(img, (x_tl, y_tl), (x_tl + w, y_tl + h), (0, 0, 255), thickness = 2)
-rects = np.array([[x, y, x + w, y + h] for (x, y, _, w, h) in detections]) # do nms on the detected bounding boxes
-sc = [score[0] for (x, y, score, w, h) in detections]
-print("detection confidence score: ", sc)
-sc = np.array(sc)
-pick = non_max_suppression(rects, probs = sc, overlapThresh = 0.3)
+    clone = resized.copy()
+    for (x_tl, y_tl, _, w, h) in detections:
+        cv2.rectangle(img, (x_tl, y_tl), (x_tl + w, y_tl + h), (0, 0, 255), thickness = 2)
+    rects = np.array([[x, y, x + w, y + h] for (x, y, _, w, h) in detections]) # do nms on the detected bounding boxes
+    sc = [score[0] for (x, y, score, w, h) in detections]
+    print("detection confidence score: ", sc)
+    sc = np.array(sc)
+    pick = non_max_suppression(rects, probs = sc, overlapThresh = 0.3)
 
 # the peice of code above creates a raw bounding box prior to using NMS
 # the code below creates a bounding box after using nms on the detections

@@ -19,7 +19,7 @@ import glob
 from PIL import Image # This will be used to read/modify images (can be done via OpenCV too)
 from numpy import *
 
-SIZES = (32, 64, 128)
+SIZES = [32, 64, 128]
 
 for i in range(3):
     # define parameters of HOG feature extraction
