@@ -39,7 +39,7 @@ args = vars(ap.parse_args())
 
 # load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args["image"])
-image = cv2.resize(image,(450,800))
+image = cv2.resize(original_image,(450,800))
 clone = image.copy()
 cv2.namedWindow("image")
 cv2.setMouseCallback("image", click_and_crop)
@@ -57,7 +57,7 @@ while True:
     # save cropped images
     elif key == ord("s"):
         for i,centerpoint in enumerate(locations):
-            crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
+            crop = clone[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
             cv2.imwrite(str(i)+'.png', crop)
         break
 
