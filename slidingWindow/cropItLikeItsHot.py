@@ -62,7 +62,7 @@ while True:
 			print(imageName)
 			cv2.imwrite('positives/' + imageName + '-' + str(i) + '.png', crop)
 		break
-	# if the 'c' key is pressed, break from the loop
+	# if the 'q' key is pressed, break from the loop
 	elif key == ord("q"):
 		break
 
