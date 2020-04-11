@@ -5,7 +5,6 @@
 
 import argparse
 import cv2
-from PIL import Image
 
 # initialize the list of reference points and boolean indicating
 # whether cropping is being performed or not
@@ -15,7 +14,7 @@ locations = []
 cropping = False
 
 # half the box crop size
-size = 20
+size = 64
 
 def click_and_crop(event, x, y, flags, param):
     # grab references to the global variables
@@ -41,6 +40,7 @@ args = vars(ap.parse_args())
 # load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args["image"])
 imageName = args["image"]
+imageName = imageName[13:-4:]
 image = cv2.resize(image,(450,800))
 clone = image.copy()
 cv2.namedWindow("image")
@@ -58,9 +58,7 @@ while True:
 	elif key == ord("s"):
 		for i,centerpoint in enumerate(locations):
 			crop = clone[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
-			imageName = imageName[13:-4:]
-			print(imageName)
-			cv2.imwrite('positives/' + imageName + '-' + str(i) + '.png', crop)
+			cv2.imwrite('positive128/' + imageName + '-' + str(i) + '.png', crop)
 		break
 	# if the 'q' key is pressed, break from the loop
 	elif key == ord("q"):
