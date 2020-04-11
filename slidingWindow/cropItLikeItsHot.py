@@ -5,11 +5,13 @@
 
 import argparse
 import cv2
+from PIL import Image
 
 # initialize the list of reference points and boolean indicating
 # whether cropping is being performed or not
 mouseX = 0
 mouseY = 0
+locations = []
 cropping = False
 
 # half the box crop size
@@ -17,13 +19,14 @@ size = 16
 
 def click_and_crop(event, x, y, flags, param):
     # grab references to the global variables
-    global mouseX, mouseY, cropping
+    global mouseX, mouseY, cropping, locations
 
     # if the left mouse button was clicked, record the starting
     # (x, y) coordinates and indicate that cropping is being
     # performed
     if event == cv2.EVENT_LBUTTONDBLCLK:
         mouseX,mouseY = x,y
+        locations.append((x,y))
         cropping = False
 
         # draw a rectangle around the region of interest
@@ -32,7 +35,7 @@ def click_and_crop(event, x, y, flags, param):
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required=True, help="/")
+ap.add_argument("-i", "--image", required=True, help="RockPictures/")
 args = vars(ap.parse_args())
 
 # load the image, clone it, and setup the mouse callback function
@@ -52,6 +55,10 @@ while True:
         image = clone.copy()
     # save cropped images
     elif key == ord("s"):
+        print(locations)
+        for i,centerpoint in enumerate(locations):
+            crop = image[centerpoint[0]-size:centerpoint[0]+size,centerpoint[1]-size:centerpoint[1]+size]
+            cv2.imwrite(str(i)+'.png', crop)
         break
     # if the 'c' key is pressed, break from the loop
     elif key == ord("c"):
