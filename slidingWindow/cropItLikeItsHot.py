@@ -40,6 +40,7 @@ args = vars(ap.parse_args())
 
 # load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args["image"])
+imageName = args["image"]
 image = cv2.resize(image,(450,800))
 clone = image.copy()
 cv2.namedWindow("image")
@@ -47,22 +48,23 @@ cv2.setMouseCallback("image", click_and_crop)
 
 # keep looping until the 'q' key is pressed
 while True:
-    # display the image and wait for a keypress
-    cv2.imshow("image", image)
-    key = cv2.waitKey(1) & 0xFF
-    # if the 'r' key is pressed, reset the cropping region
-    if key == ord("r"):
-        image = clone.copy()
+	# display the image and wait for a keypress
+	cv2.imshow("image", image)
+	key = cv2.waitKey(1) & 0xFF
+# if the 'r' key is pressed, reset the cropping region
+	if key == ord("r"):
+		image = clone.copy()
     # save cropped images
-    elif key == ord("s"):
-        print(locations)
-        for i,centerpoint in enumerate(locations):
-            crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
-            cv2.imwrite(args["image"]+str(i)+'.png', crop)
-        break
-    # if the 'c' key is pressed, break from the loop
-    elif key == ord("c"):
-        break
+	elif key == ord("s"):
+		for i,centerpoint in enumerate(locations):
+			crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
+			imageName = imageName[13:-4:]
+			print(imageName)
+			cv2.imwrite('positives/' + imageName + '-' + str(i) + '.png', crop)
+		break
+	# if the 'c' key is pressed, break from the loop
+	elif key == ord("q"):
+		break
 
 
 
