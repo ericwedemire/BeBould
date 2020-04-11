@@ -30,10 +30,12 @@ scale = 0
 detections = []
 SIZES = [32, 64, 128]
 # read the image you want to detect the object in:
-img= cv2.imread("newTestImage.jpg")
+'''WINDOWS
+img= cv2.imread("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/RockPictures/20200116_140158.jpg")'''
+img= cv2.imread("new_test_image.jpg")
 
 # Try it with image resized if the image is too big
-img= cv2.resize(img,(601,764)) # can change the size to default by commenting this code out our put in a random number
+img= cv2.resize(img,(450,800)) # can change the size to default by commenting this code out our put in a random number
 
 for i in  range(3):
     # Upload the saved svm model:
@@ -88,6 +90,9 @@ k = cv2.waitKey(0) & 0xFF
 if k == 27:             #wait for ESC key to exit
     cv2.destroyAllWindows()
 elif k == ord('s'):
-    cv2.imwrite('saved_image.png',img)
+    img= cv2.resize(img,(900,1600))
+    '''WINDOWS
+    cv2.imwrite("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/saved_image.png", img)'''
+    #cv2.imwrite('saved_image.png',img)
     cv2.destroyAllWindows()
 
