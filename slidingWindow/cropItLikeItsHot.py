@@ -5,7 +5,6 @@
 
 import argparse
 import cv2
-from PIL import Image
 
 # initialize the list of reference points and boolean indicating
 # whether cropping is being performed or not
@@ -50,18 +49,20 @@ while True:
     # display the image and wait for a keypress
     cv2.imshow("image", image)
     key = cv2.waitKey(1) & 0xFF
+
     # if the 'r' key is pressed, reset the cropping region
     if key == ord("r"):
         image = clone.copy()
+
     # save cropped images
     elif key == ord("s"):
-        print(locations)
         for i,centerpoint in enumerate(locations):
             crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
-            cv2.imwrite(args["image"]+str(i)+'.png', crop)
+            cv2.imwrite(str(i)+'.png', crop)
         break
-    # if the 'c' key is pressed, break from the loop
-    elif key == ord("c"):
+
+    # if the 'q' key is pressed, break from the loop
+    elif key == ord("q"):
         break
 
 
