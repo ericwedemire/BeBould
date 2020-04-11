@@ -57,7 +57,7 @@ while True:
     # save cropped images
 	elif key == ord("s"):
 		for i,centerpoint in enumerate(locations):
-			crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
+			crop = clone[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
 			imageName = imageName[13:-4:]
 			print(imageName)
 			cv2.imwrite('positives/' + imageName + '-' + str(i) + '.png', crop)
