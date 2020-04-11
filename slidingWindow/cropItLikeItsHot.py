@@ -15,7 +15,7 @@ locations = []
 cropping = False
 
 # half the box crop size
-size = 16
+size = 20
 
 def click_and_crop(event, x, y, flags, param):
     # grab references to the global variables
@@ -58,7 +58,7 @@ while True:
         print(locations)
         for i,centerpoint in enumerate(locations):
             crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
-            cv2.imwrite(str(i)+'.png', crop)
+            cv2.imwrite(args["image"]+str(i)+'.png', crop)
         break
     # if the 'c' key is pressed, break from the loop
     elif key == ord("c"):
