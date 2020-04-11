@@ -1,3 +1,8 @@
+##
+## Run like this:
+## python3 cropItLikeItsHot.py --image newTestImage.jpg
+##
+
 import argparse
 import cv2
 
