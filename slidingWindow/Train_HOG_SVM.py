@@ -35,8 +35,8 @@ for i in range(3):
 
 
     # FOR WINDOWS
-    pos_im_path = r"C:\Users\ericw\OneDrive\Desktop\GitHub\NotHackED2020\slidingWindow\positives" # This is the path of our positive input dataset
-    neg_im_path = r"C:\Users\ericw\OneDrive\Desktop\GitHub\NotHackED2020\slidingWindow\negatives"  # define the same for negatives
+    pos_im_path = r"positives" # This is the path of our positive input dataset
+    neg_im_path = r"negatives"  # define the same for negatives
 
     # read the image files:
     pos_im_listing = os.listdir(pos_im_path) # it will read all the files in the positive image path (so all the required images)

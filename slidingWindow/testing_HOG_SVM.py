@@ -8,6 +8,7 @@ import numpy as np
 import cv2
 import os
 import glob
+from PIL import Image
 
 #Define HOG Parameters
 # change them if necessary to orientations = 8, pixels per cell = (16,16), cells per block to (1,1) for weaker HOG
@@ -50,6 +51,7 @@ for i in  range(3):
                 continue
             if window.shape[2] != 3:
                 continue
+            
             window=color.rgb2gray(window)
             fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
             fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
