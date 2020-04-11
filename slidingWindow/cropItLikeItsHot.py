@@ -57,7 +57,7 @@ while True:
     elif key == ord("s"):
         print(locations)
         for i,centerpoint in enumerate(locations):
-            crop = image[centerpoint[0]-size:centerpoint[0]+size,centerpoint[1]-size:centerpoint[1]+size]
+            crop = image[centerpoint[1]-size:centerpoint[1]+size, centerpoint[0]-size:centerpoint[0]+size]
             cv2.imwrite(str(i)+'.png', crop)
         break
     # if the 'c' key is pressed, break from the loop
