@@ -31,16 +31,16 @@ for i in range(3):
 
     # define path to images:
     #pos_im_path = r"positives" # This is the path of our positive input dataset
-    #neg_im_path= r"negatives"  # define the same for negatives
+    #neg_im_path = r"negatives"  # define the same for negatives
 
 
     # FOR WINDOWS
-    pos_im_path = r"positives" # This is the path of our positive input dataset
-    neg_im_path = r"negatives"  # define the same for negatives
+    pos_im_path = [r"positive32", r"positive64", r"positive128"] # This is the path of our positive input dataset
+    neg_im_path = [r"negatives32", r"negatives64", r"negatives128"]  # define the same for negatives
 
     # read the image files:
-    pos_im_listing = os.listdir(pos_im_path) # it will read all the files in the positive image path (so all the required images)
-    neg_im_listing = os.listdir(neg_im_path)
+    pos_im_listing = os.listdir(pos_im_path[i]) # it will read all the files in the positive image path (so all the required images)
+    neg_im_listing = os.listdir(neg_im_path[i])
     num_pos_samples = size(pos_im_listing) # simply states the total no. of images
     num_neg_samples = size(neg_im_listing)
     print()
@@ -52,8 +52,8 @@ for i in range(3):
     # compute HOG features and label them:
     for file in pos_im_listing: #this loop enables reading the files in the pos_im_listing variable one by one
 
-        img = Image.open(pos_im_path + '/' + file) # open the file linux
-        #img = Image.open(pos_im_path + '\\' + file) # open the file windows
+        #img = Image.open(pos_im_path[i] + '/' + file) # open the file linux
+        img = Image.open(pos_im_path[i] + '\\' + file) # open the file windows
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
@@ -70,8 +70,8 @@ for i in range(3):
     # Same for the negative images
     for file in neg_im_listing:
 
-        img= Image.open(neg_im_path + '/' + file)   # linux
-        #img= Image.open(neg_im_path + '\\' + file) # windows
+        #img= Image.open(neg_im_path[i] + '/' + file)   # linux
+        img= Image.open(neg_im_path[i] + '\\' + file) # windows
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
