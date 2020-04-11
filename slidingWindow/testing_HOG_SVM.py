@@ -51,6 +51,7 @@ for i in  range(3):
                 continue
             if window.shape[2] != 3:
                 continue
+            
             window=color.rgb2gray(window)
             fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
             fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
