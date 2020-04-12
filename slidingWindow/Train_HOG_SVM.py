@@ -6,6 +6,7 @@ from skimage.io import imread
 from sklearn.externals import joblib
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import LinearSVC, LinearSVR
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from skimage import color
@@ -59,8 +60,8 @@ for i in range(3):
     # compute HOG features and label them:
     for file in pos_im_listing: #this loop enables reading the files in the pos_im_listing variable one by one
 
-        #img = Image.open(pos_im_path[i] + '/' + file) # open the file linux
-        img = Image.open(pos_im_path[i] + '\\' + file) # open the file windows
+        img = Image.open(pos_im_path[i] + '/' + file) # open the file linux
+        #img = Image.open(pos_im_path[i] + '\\' + file) # open the file windows
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
@@ -78,8 +79,8 @@ for i in range(3):
     # Same for the negative images
     for file in neg_im_listing:
 
-        #img= Image.open(neg_im_path[i] + '/' + file)   # linux
-        img= Image.open(neg_im_path[i] + '\\' + file) # windows
+        img= Image.open(neg_im_path[i] + '/' + file)   # linux
+        #img= Image.open(neg_im_path[i] + '\\' + file) # windows
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
@@ -98,10 +99,17 @@ for i in range(3):
     print(" Constructing training/testing split...")
     (trainData, testData, trainLabels, testLabels) = train_test_split(np.array(data), labels, test_size=0.20, random_state=42)
 
+    """
     #Train the linear SVM
     print(" Training Linear SVM classifier...")
     model = LinearSVC()
     model.fit(trainData, trainLabels)
+    """
+    #Train the linear regression
+    print(" Training Linear Regression classifier...")
+    model = LogisticRegression()
+    model.fit(trainData, trainLabels)
+    
 
     #Evaluate the classifier
     print(" Evaluating classifier on test data ...")

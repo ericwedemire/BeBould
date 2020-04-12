@@ -38,8 +38,8 @@ detections = []
 SIZES = [32, 64, 128]
 # read the image you want to detect the object in:
 '''WINDOWS'''
-img= cv2.imread("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/TestImages/test1.jpg")
-#img= cv2.imread("new_test_image.jpg")
+#img= cv2.imread("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/TestImages/test1.jpg")
+img= cv2.imread("TestImages/test4.jpg")
 
 # Try it with image resized if the image is too big
 img= cv2.resize(img,(450,800)) # can change the size to default by commenting this code out our put in a random number
@@ -79,11 +79,14 @@ for i in  range(3):
     clone = resized.copy()
     '''for (x_tl, y_tl, _, w, h, size) in detections:
         cv2.rectangle(img, (x_tl, y_tl), (x_tl + (size * 2), y_tl + (size*2)), (0, 0, 255), thickness = 2)'''
-    rects = np.array([[x, y, x + (size * 2), y + (size * 2)] for (x, y, _, w, h, size) in detections]) # do nms on the detected bounding boxes
+    rects = np.array([[x, y, x + size, y + size] for (x, y, _, w, h, size) in detections]) # do nms on the detected bounding boxes
+    
     sc = [score[0] for (x, y, score, w, h, size) in detections]
     print("detection confidence score: ", sc)
     sc = np.array(sc)
-    pick = non_max_suppression(rects, probs = sc, overlapThresh = 0.3)
+    
+    pick = non_max_suppression(rects, probs = sc, overlapThresh = 0.2)
+
 
 # the peice of code above creates a raw bounding box prior to using NMS
 # the code below creates a bounding box after using nms on the detections
@@ -91,7 +94,9 @@ for i in  range(3):
 # cv2.imshow in this right place (since python is procedural it will go through the code line by line).
         
 for (xA, yA, xB, yB) in pick:
+    #cv2.rectangle(img, (xA, yA), (xA+32, yA+32), (0,255,0), 2)
     cv2.rectangle(img, (xA, yA), (xB, yB), (0,255,0), 2)
+
 cv2.imshow("Raw Detections after NMS", img)
 #### Save the images below
 k = cv2.waitKey(0) & 0xFF 
@@ -100,7 +105,7 @@ if k == 27:             #wait for ESC key to exit
 elif k == ord('s'):
     img= cv2.resize(img,(900,1600))
     '''WINDOWS'''
-    cv2.imwrite("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/saved_image.png", img)
+    #cv2.imwrite("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/saved_image.png", img)
     #cv2.imwrite('saved_image.png',img)
     cv2.destroyAllWindows()
 
