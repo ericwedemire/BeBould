@@ -23,10 +23,17 @@ SIZES = [32, 64, 128]
 
 for i in range(3):
     # define parameters of HOG feature extraction
+    orientations = 8
+    pixels_per_cell = (16, 16)
+    cells_per_block = (1, 1)
+    threshold = .3
+    
+    '''
     orientations = 9
     pixels_per_cell = (8, 8)
     cells_per_block = (2, 2)
-    threshold = .3
+    threshold = .6
+    '''
 
 
     # define path to images:
@@ -59,11 +66,12 @@ for i in range(3):
         img = img.resize((SIZES[i],SIZES[i]))
 
 
-        gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
+        #gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
+        gray = img.convert('RGB') #RBG chaneel
         ## i think she said to add color scale channels here if we wanted to, instead of the greyscale
 
         # calculate HOG for positive features
-        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) # fd= feature descriptor
+        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True, multichannel=True) # fd= feature descriptor
         data.append(fd)
         labels.append(1)
         
@@ -75,9 +83,9 @@ for i in range(3):
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
-        gray= img.convert('L')
+        gray= img.convert('RGB')
         # Now we calculate the HOG for negative features
-        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) 
+        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True, multichannel=True) 
         data.append(fd)
         labels.append(0)
 

@@ -12,10 +12,17 @@ from PIL import Image
 
 #Define HOG Parameters
 # change them if necessary to orientations = 8, pixels per cell = (16,16), cells per block to (1,1) for weaker HOG
+orientations = 8
+pixels_per_cell = (16, 16)
+cells_per_block = (1, 1)
+threshold = .3
+
+'''
 orientations = 9
 pixels_per_cell = (8, 8)
 cells_per_block = (2, 2)
 threshold = .3
+'''
 
 # define the sliding window:
 def sliding_window(image, stepSize, windowSize):# image is the input, step size is the no.of pixels needed to skip and windowSize is the size of the actual window
@@ -31,7 +38,7 @@ detections = []
 SIZES = [32, 64, 128]
 # read the image you want to detect the object in:
 '''WINDOWS'''
-img= cv2.imread("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/TestImages/test2.jpg")
+img= cv2.imread("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/TestImages/test1.jpg")
 #img= cv2.imread("new_test_image.jpg")
 
 # Try it with image resized if the image is too big
@@ -54,25 +61,26 @@ for i in  range(3):
             if window.shape[2] != 3:
                 continue
             
-            window=color.rgb2gray(window)
-            fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
+            #window=color.rgb2gray(window)
+            fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2', multichannel=True)  # extract HOG features from the window captured
             fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
             pred = model.predict(fds) # use the SVM model to make a prediction on the HOG features extracted from the window
             
             if pred == 1:
-                if model.decision_function(fds) > 0.6:  # set a threshold value for the SVM prediction i.e. only firm the predictions above probability of 0.6
+                if model.decision_function(fds) > 0.7:  # set a threshold value for the SVM prediction i.e. only firm the predictions above probability of 0.6
                     print("Detection:: Location -> ({}, {})".format(x, y))
                     print("Scale ->  {} | Confidence Score {} \n".format(scale,model.decision_function(fds)))
                     detections.append((int(x * (downscale**scale)), int(y * (downscale**scale)), model.decision_function(fds),
                                     int(windowSize[0]*(downscale**scale)), # create a list of all the predictions found
-                                        int(windowSize[1]*(downscale**scale))))
+                                        int(windowSize[1]*(downscale**scale)),
+                                        SIZES[i]))
         scale+=1
         
     clone = resized.copy()
-    for (x_tl, y_tl, _, w, h) in detections:
-        cv2.rectangle(img, (x_tl, y_tl), (x_tl + w, y_tl + h), (0, 0, 255), thickness = 2)
-    rects = np.array([[x, y, x + w, y + h] for (x, y, _, w, h) in detections]) # do nms on the detected bounding boxes
-    sc = [score[0] for (x, y, score, w, h) in detections]
+    '''for (x_tl, y_tl, _, w, h, size) in detections:
+        cv2.rectangle(img, (x_tl, y_tl), (x_tl + (size * 2), y_tl + (size*2)), (0, 0, 255), thickness = 2)'''
+    rects = np.array([[x, y, x + (size * 2), y + (size * 2)] for (x, y, _, w, h, size) in detections]) # do nms on the detected bounding boxes
+    sc = [score[0] for (x, y, score, w, h, size) in detections]
     print("detection confidence score: ", sc)
     sc = np.array(sc)
     pick = non_max_suppression(rects, probs = sc, overlapThresh = 0.3)
@@ -91,8 +99,8 @@ if k == 27:             #wait for ESC key to exit
     cv2.destroyAllWindows()
 elif k == ord('s'):
     img= cv2.resize(img,(900,1600))
-    '''WINDOWS
-    cv2.imwrite("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/saved_image.png", img)'''
+    '''WINDOWS'''
+    cv2.imwrite("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/saved_image.png", img)
     #cv2.imwrite('saved_image.png',img)
     cv2.destroyAllWindows()
 
