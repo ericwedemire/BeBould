@@ -12,12 +12,14 @@ from PIL import Image
 
 #Define HOG Parameters
 # change them if necessary to orientations = 8, pixels per cell = (16,16), cells per block to (1,1) for weaker HOG
+
 orientations = 8
 pixels_per_cell = (16, 16)
 cells_per_block = (1, 1)
 threshold = .3
 
 '''
+
 orientations = 9
 pixels_per_cell = (8, 8)
 cells_per_block = (2, 2)
@@ -39,7 +41,7 @@ SIZES = [32, 64, 128]
 # read the image you want to detect the object in:
 '''WINDOWS'''
 #img= cv2.imread("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/TestImages/test1.jpg")
-img= cv2.imread("TestImages/test4.jpg")
+img= cv2.imread("TestImages/test3.jpg")
 
 # Try it with image resized if the image is too big
 img= cv2.resize(img,(450,800)) # can change the size to default by commenting this code out our put in a random number
@@ -61,8 +63,12 @@ for i in  range(3):
             if window.shape[2] != 3:
                 continue
             
-            #window=color.rgb2gray(window)
+            '''
+            window=color.rgb2gray(window)
+            fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2')  # extract HOG features from the window captured
+            '''
             fds = hog(window, orientations, pixels_per_cell, cells_per_block, block_norm='L2', multichannel=True)  # extract HOG features from the window captured
+            
             fds = fds.reshape(1, -1) # re shape the image to make a silouhette of hog
             pred = model.predict(fds) # use the SVM model to make a prediction on the HOG features extracted from the window
             
@@ -77,8 +83,9 @@ for i in  range(3):
         scale+=1
         
     clone = resized.copy()
-    '''for (x_tl, y_tl, _, w, h, size) in detections:
-        cv2.rectangle(img, (x_tl, y_tl), (x_tl + (size * 2), y_tl + (size*2)), (0, 0, 255), thickness = 2)'''
+    # draw red boxes
+    for (x_tl, y_tl, _, w, h, size) in detections:
+        cv2.rectangle(img, (x_tl, y_tl), (x_tl + (size), y_tl + (size)), (0, 0, 255), thickness = 2)
     rects = np.array([[x, y, x + size, y + size] for (x, y, _, w, h, size) in detections]) # do nms on the detected bounding boxes
     
     sc = [score[0] for (x, y, score, w, h, size) in detections]
@@ -106,6 +113,6 @@ elif k == ord('s'):
     img= cv2.resize(img,(900,1600))
     '''WINDOWS'''
     #cv2.imwrite("C:/Users/ericw/OneDrive/Desktop/GitHub/NotHackED2020/slidingWindow/saved_image.png", img)
-    #cv2.imwrite('saved_image.png',img)
+    cv2.imwrite('LOG_test_ori8_gray.png',img)
     cv2.destroyAllWindows()
 
