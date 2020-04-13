@@ -22,16 +22,19 @@ SIZES = [32, 64, 128]
 
 for i in range(3):
     # define parameters of HOG feature extraction
+    
     orientations = 8
     pixels_per_cell = (16, 16)
     cells_per_block = (1, 1)
     threshold = .3
     '''
+
     orientations = 9
     pixels_per_cell = (8, 8)
     cells_per_block = (2, 2)
     threshold = .6
     '''
+    
 
     # define path to images:
     #pos_im_path = r"positives" # This is the path of our positive input dataset
@@ -61,13 +64,18 @@ for i in range(3):
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
 
+        #RGB--------------------------
+        gray= img.convert('RGB')
 
-        #gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
-        gray = img.convert('RGB') #RBG chaneel
+        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True, multichannel=True) # fd= feature descriptor
+        '''
         ## i think she said to add color scale channels here if we wanted to, instead of the greyscale
 
         # calculate HOG for positive features
-        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True, multichannel=True) # fd= feature descriptor
+        gray = img.convert('L') # convert the image into single channel i.e. RGB to grayscale
+        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True) # fd= feature descriptor
+        '''
+
         data.append(fd)
         labels.append(1)
         
@@ -79,9 +87,19 @@ for i in range(3):
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
+        
+        
+        #RGB--------------------------
         gray= img.convert('RGB')
+
+        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True, multichannel=True) # fd= feature descriptor
+        '''
+
+        gray= img.convert('L')
         # Now we calculate the HOG for negative features
-        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True, multichannel=True) 
+        fd = hog(gray, orientations, pixels_per_cell, cells_per_block, block_norm='L2', feature_vector=True)
+        '''
+
         data.append(fd)
         labels.append(0)
 
@@ -99,11 +117,15 @@ for i in range(3):
     print(" Training Linear SVM classifier...")
     model = LinearSVC()
     model.fit(trainData, trainLabels)
+    
     """
-    #Train the linear regression
-    print(" Training Linear Regression classifier...")
+    
+    #Train the Logistic Regression
+    print(" Training Logistic Regression classifier...")
     model = LogisticRegression()
     model.fit(trainData, trainLabels)
+
+    
     
 
     #Evaluate the classifier
