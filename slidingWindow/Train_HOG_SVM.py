@@ -1,5 +1,3 @@
-# Importing the necessary modules:
-
 from skimage.feature import hog
 from skimage.transform import pyramid_gaussian
 from skimage.io import imread
@@ -29,7 +27,6 @@ for i in range(3):
     pixels_per_cell = (16, 16)
     cells_per_block = (1, 1)
     threshold = .3
-    
     '''
 
     orientations = 9
@@ -39,11 +36,9 @@ for i in range(3):
     '''
     
 
-
     # define path to images:
     #pos_im_path = r"positives" # This is the path of our positive input dataset
     #neg_im_path = r"negatives"  # define the same for negatives
-
 
     # FOR WINDOWS
     pos_im_path = [r"positive32", r"positive64", r"positive128"] # This is the path of our positive input dataset
@@ -142,3 +137,7 @@ for i in range(3):
     #joblib.dump(model, 'rockModel.npy')
     modname = "rockModel-" + str(SIZES[i]) + ".npy"
     joblib.dump(model, modname)
+
+
+
+

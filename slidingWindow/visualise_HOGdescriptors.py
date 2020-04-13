@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 23 20:53:18 2017
-
-@author: Samyakh Tukra
-"""
 
 import matplotlib.pyplot as plt
 from skimage import io
@@ -11,12 +5,12 @@ from skimage.feature import hog
 from skimage import data, color, exposure
 from PIL import Image
 
-img = io.imread(r"newTestImage.jpg")
+img = io.imread(r"TestImages/test1.jpg")
 
 image = color.rgb2gray(img)
 
-fd, hog_image = hog(image, orientations=8, pixels_per_cell=(16, 16),
-                    cells_per_block=(1, 1), visualize=True)
+fd, hog_image = hog(image, orientations=8, pixels_per_cell=(16, 16), cells_per_block=(1, 1), visualize=True)
+#fd, hog_image = hog(image, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=True)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4), sharex=True, sharey=True)
 
