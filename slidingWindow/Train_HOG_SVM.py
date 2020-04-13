@@ -55,8 +55,8 @@ for i in range(3):
     # compute HOG features and label them:
     for file in pos_im_listing: #this loop enables reading the files in the pos_im_listing variable one by one
 
-        img = Image.open(pos_im_path[i] + '/' + file) # open the file linux
-        #img = Image.open(pos_im_path[i] + '\\' + file) # open the file windows
+        #img = Image.open(pos_im_path[i] + '/' + file) # open the file linux
+        img = Image.open(pos_im_path[i] + '\\' + file) # open the file windows
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
@@ -74,8 +74,8 @@ for i in range(3):
     # Same for the negative images
     for file in neg_im_listing:
 
-        img= Image.open(neg_im_path[i] + '/' + file)   # linux
-        #img= Image.open(neg_im_path[i] + '\\' + file) # windows
+        #img= Image.open(neg_im_path[i] + '/' + file)   # linux
+        img= Image.open(neg_im_path[i] + '\\' + file) # windows
 
         #img = img.resize((64,64))
         img = img.resize((SIZES[i],SIZES[i]))
